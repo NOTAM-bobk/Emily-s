@@ -110,6 +110,54 @@ input, textarea {
   }
 }
 
+/* Home screen: a full-bleed green hero (greeting + quote) that runs edge to
+   edge, then a white/cream body underneath for everything else. */
+
+.home-screen {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.home-hero {
+  width: 100%;
+  background: linear-gradient(165deg, var(--sage-200), var(--sage-50) 78%);
+  border-radius: 0 0 32px 32px;
+}
+
+.home-hero__inner {
+  width: 100%;
+  max-width: 640px;
+  margin: 0 auto;
+  padding: 22px 20px 26px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+@media (min-width: 640px) {
+  .home-hero__inner {
+    padding: 40px 32px 32px;
+  }
+}
+
+.home-body {
+  width: 100%;
+  max-width: 640px;
+  margin: 0 auto;
+  padding: 22px 20px 130px;
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+}
+
+@media (min-width: 640px) {
+  .home-body {
+    padding: 26px 32px 140px;
+    gap: 26px;
+  }
+}
+
 /* ---------- Header ---------- */
 
 .home-header {
@@ -188,12 +236,13 @@ input, textarea {
 }
 
 /* ---------- Quote card ---------- */
+/* Lives inside .home-hero now, so it takes the hero's background
+   instead of carrying its own card chrome. */
 
 .quote-card {
-  background: linear-gradient(160deg, var(--sage-100), var(--sage-50) 70%);
-  border-radius: var(--radius-lg);
-  padding: 20px 22px 22px;
-  border: 1px solid rgba(63, 91, 50, 0.1);
+  background: none;
+  border: none;
+  padding: 0;
 }
 
 .quote-card__eyebrow {
