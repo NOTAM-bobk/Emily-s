@@ -244,18 +244,19 @@ function MoodTracker({ week, onLog, onSeeHistory }) {
           <div key={slot.key} className="mood-tracker__col">
             <motion.button
               className="mood-tracker__face"
-              disabled={slot.isFuture}
+              disabled={!slot.isToday}
               style={{
                 background: slot.mood ? MOOD_TINTS[slot.mood] : 'var(--paper)',
                 borderStyle: slot.mood ? 'solid' : 'dashed',
-                opacity: slot.isFuture ? 0.4 : 1,
+                opacity: !slot.isToday && !slot.mood ? 0.4 : 1,
                 outline: slot.isToday ? '2px solid var(--sage-500)' : 'none',
                 outlineOffset: 2,
+                cursor: slot.isToday ? 'pointer' : 'default',
               }}
-              whileTap={slot.isFuture ? {} : { scale: 0.88 }}
-              whileHover={slot.isFuture ? {} : { scale: 1.06 }}
-              onClick={() => !slot.isFuture && setPickerOpenFor(pickerOpenFor === slot.key ? null : slot.key)}
-              aria-label={`Log mood for ${slot.day}`}
+              whileTap={slot.isToday ? { scale: 0.88 } : {}}
+              whileHover={slot.isToday ? { scale: 1.06 } : {}}
+              onClick={() => slot.isToday && setPickerOpenFor(pickerOpenFor === slot.key ? null : slot.key)}
+              aria-label={slot.isToday ? `Log mood for ${slot.day}` : `${slot.day} — not editable`}
             >
               {slot.mood ? (
                 <MoodFace mood={slot.mood} size={22} />
@@ -645,37 +646,44 @@ export default function App() {
 
   const screens = {
     home: (
-      <div className="screen">
-        <motion.header
-          className="home-header"
-          initial={{ opacity: 0, y: -8 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.4 }}
-        >
-          <div>
-            <p className="home-header__eyebrow">
-              {new Date().toLocaleDateString([], { weekday: 'long', month: 'short', day: 'numeric' })}
-            </p>
-            <h1>
-              Hi, {greetingName} <span className="wave">👋</span>
-            </h1>
-          </div>
-          <button className="round-btn" aria-label="Account" onClick={() => setSettingsOpen(true)}>
-            <User size={16} />
-          </button>
-        </motion.header>
+      <div className="home-screen">
+        <div className="home-hero">
+          <div className="home-hero__inner">
+            <motion.header
+              className="home-header"
+              initial={{ opacity: 0, y: -8 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.4 }}
+            >
+              <div>
+                <p className="home-header__eyebrow">
+                  {new Date().toLocaleDateString([], { weekday: 'long', month: 'short', day: 'numeric' })}
+                </p>
+                <h1>
+                  Hi, {greetingName} <span className="wave">👋</span>
+                </h1>
+              </div>
+              <button className="round-btn" aria-label="Account" onClick={() => setSettingsOpen(true)}>
+                <User size={16} />
+              </button>
+            </motion.header>
 
-        <QuoteCard quote={quote} />
-        <MoodTracker week={week} onLog={handleLogMood} onSeeHistory={() => setTab('insights')} />
-        <QuickActions onSelect={setComposerPreset} />
-        <EntryList
-          entries={entries.slice(0, 3)}
-          onOpen={setViewingEntry}
-          onSeeAll={() => setTab('entries')}
-          title="Recent Entries"
-          emptyTitle="No entries yet"
-          emptySubtitle="Use a quick action above to write your first one."
-        />
+            <QuoteCard quote={quote} />
+          </div>
+        </div>
+
+        <div className="home-body">
+          <MoodTracker week={week} onLog={handleLogMood} onSeeHistory={() => setTab('insights')} />
+          <QuickActions onSelect={setComposerPreset} />
+          <EntryList
+            entries={entries.slice(0, 3)}
+            onOpen={setViewingEntry}
+            onSeeAll={() => setTab('entries')}
+            title="Recent Entries"
+            emptyTitle="No entries yet"
+            emptySubtitle="Use a quick action above to write your first one."
+          />
+        </div>
       </div>
     ),
     entries: (
