@@ -1,0 +1,126 @@
+/* New classes used by the updated Onboarding.jsx.
+   Add these to your existing stylesheet alongside .onboarding, .onboarding__card,
+   .onboarding__mascot, .onboarding__input, .onboarding__cta, .save-btn, .link-btn, etc.
+   Uses the same --ink / --cream variables already in your theme. */
+
+.onboarding__progress {
+  display: flex;
+  gap: 6px;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.onboarding__dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 999px;
+  background: var(--ink);
+  opacity: 0.15;
+  transition: opacity 0.25s ease, width 0.25s ease;
+}
+
+.onboarding__dot--active {
+  opacity: 1;
+  width: 16px;
+}
+
+.onboarding__dot--done {
+  opacity: 0.45;
+}
+
+.onboarding__step {
+  width: 100%;
+}
+
+.onboarding__panel {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 4px;
+}
+
+.onboarding__icon {
+  display: inline-flex;
+  margin-bottom: 8px;
+}
+
+.onboarding__eyebrow {
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  opacity: 0.55;
+  margin-bottom: 4px;
+}
+
+.onboarding__headline {
+  font-size: 1.35rem;
+  line-height: 1.3;
+  margin: 0 0 8px;
+}
+
+.onboarding__body {
+  font-size: 0.95rem;
+  line-height: 1.5;
+  opacity: 0.75;
+  max-width: 34ch;
+  margin: 0 0 4px;
+}
+
+.onboarding__chips {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.onboarding__chip {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+  width: 100%;
+  padding: 12px 14px;
+  border-radius: 12px;
+  border: 1px solid var(--ink);
+  background: transparent;
+  opacity: 0.7;
+  text-align: left;
+  cursor: pointer;
+  transition: opacity 0.15s ease, background 0.15s ease, transform 0.1s ease;
+}
+
+.onboarding__chip:hover {
+  opacity: 0.9;
+}
+
+.onboarding__chip--selected {
+  opacity: 1;
+  background: var(--ink);
+  color: var(--cream);
+}
+
+.onboarding__chip-label {
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+
+.onboarding__chip-desc {
+  font-size: 0.8rem;
+  opacity: 0.65;
+}
+
+.onboarding__footer-nav {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+  margin-top: 8px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .onboarding__dot,
+  .onboarding__chip {
+    transition: none;
+  }
+}
