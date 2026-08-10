@@ -38,17 +38,19 @@ import './App.css'
    composer/detail sheets that float above every tab), so they live here
    rather than in a separate components folder. */
 
-function CatMascot({ size = 32 }) {
+function CatMascot({ size = 32, tone = 'dark' }) {
+  const bodyColor = tone === 'light' ? 'var(--cream)' : 'var(--ink)'
+  const eyeColor = tone === 'light' ? 'var(--ink)' : 'var(--cream)'
   return (
     <svg width={size} height={size} viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
       <path
         d="M11 8 L14 16 L20 13 L26 16 L29 8 L27 20 C27 26 24 29 20 29 C16 29 13 26 13 20 Z"
-        fill="var(--ink)"
+        fill={bodyColor}
       />
-      <circle cx="16.5" cy="19.5" r="1.1" fill="var(--cream)" />
-      <circle cx="23.5" cy="19.5" r="1.1" fill="var(--cream)" />
-      <path d="M18.3 22.5c.5.6 1 .6 1.5 0" stroke="var(--cream)" strokeWidth="1.1" strokeLinecap="round" />
-      <path d="M14 21.5l-3 .3M14 23l-3.2 1.3M26 21.5l3 .3M26 23l3.2 1.3" stroke="var(--ink)" strokeWidth="1" strokeLinecap="round" />
+      <circle cx="16.5" cy="19.5" r="1.1" fill={eyeColor} />
+      <circle cx="23.5" cy="19.5" r="1.1" fill={eyeColor} />
+      <path d="M18.3 22.5c.5.6 1 .6 1.5 0" stroke={eyeColor} strokeWidth="1.1" strokeLinecap="round" />
+      <path d="M14 21.5l-3 .3M14 23l-3.2 1.3M26 21.5l3 .3M26 23l3.2 1.3" stroke={bodyColor} strokeWidth="1" strokeLinecap="round" />
     </svg>
   )
 }
@@ -220,7 +222,7 @@ function QuoteCard({ quote }) {
       transition={{ duration: 0.5, delay: 0.05 }}
     >
       <div className="quote-card__eyebrow">
-        <CatMascot size={22} />
+        <CatMascot size={22} tone="light" />
         <span>Quote of the day</span>
       </div>
       <p className="quote-card__text">&ldquo;{quote.text}&rdquo;</p>
@@ -260,9 +262,9 @@ function MoodTracker({ week, onLog, onSeeHistory }) {
             >
               {slot.mood ? (
                 <MoodFace mood={slot.mood} size={22} />
-              ) : (
+              ) : slot.isToday ? (
                 <span className="mood-tracker__plus">+</span>
-              )}
+              ) : null}
             </motion.button>
             <span className="mood-tracker__day">{slot.day}</span>
           </div>
@@ -314,15 +316,16 @@ function QuickActions({ onSelect }) {
           <motion.button
             key={action.id}
             className="quick-actions__card"
-            style={{ background: TINTS[action.tint] }}
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.4, delay: 0.08 * i }}
-            whileHover={{ y: -4, boxShadow: 'var(--shadow-lift)' }}
+            whileHover={{ y: -3, boxShadow: 'var(--shadow-lift)' }}
             whileTap={{ scale: 0.97 }}
             onClick={() => onSelect(action)}
           >
-            <Icon size={20} strokeWidth={1.8} color="var(--ink)" />
+            <span className="quick-actions__icon">
+              <Icon size={18} strokeWidth={1.8} color="var(--ink)" />
+            </span>
             <span className="quick-actions__title">{action.title}</span>
           </motion.button>
         )
@@ -655,18 +658,15 @@ export default function App() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.4 }}
             >
-              <div>
-                <p className="home-header__eyebrow">
-                  {new Date().toLocaleDateString([], { weekday: 'long', month: 'short', day: 'numeric' })}
-                </p>
-                <h1>
-                  Hi, {greetingName} <span className="wave">👋</span>
-                </h1>
-              </div>
+              <h1>
+                Hi, {greetingName} <span className="wave">👋</span>
+              </h1>
               <button className="round-btn" aria-label="Account" onClick={() => setSettingsOpen(true)}>
                 <User size={16} />
               </button>
             </motion.header>
+
+            <div className="home-hero__divider" />
 
             <QuoteCard quote={quote} />
           </div>
