@@ -41,12 +41,9 @@ export function formatEntryDate(timestamp) {
   return date.toLocaleDateString([], { weekday: 'short', month: 'short', day: 'numeric' })
 }
 
-/** Consecutive-day streak counting backward from today, using entries + logged moods. */
-export function computeStreak(entries, moods) {
+/** Consecutive-day streak counting backward from today, based on entry dates. */
+export function computeStreak(entries) {
   const activeDays = new Set(entries.map((e) => toKey(new Date(e.createdAt))))
-  Object.entries(moods).forEach(([key, mood]) => {
-    if (mood) activeDays.add(key)
-  })
 
   let streak = 0
   const cursor = startOfDay(new Date())
