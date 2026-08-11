@@ -28,8 +28,8 @@ import Settings from './Settings.jsx'
 import Onboarding from './Onboarding.jsx'
 
 import { useLocalStorage } from './storage.js'
-import { getWeekDates, formatEntryDate } from './dates.js'
-import { getTodaysQuote, freeformPreset, quickActions, guidedPrompts, moods, TINTS, MOOD_TINTS } from './copy.js'
+import { formatEntryDate } from './dates.js'
+import { getTodaysQuote, freeformPreset, quickActions, guidedPrompts, TINTS } from './copy.js'
 
 import './App.css'
 
@@ -231,81 +231,6 @@ function QuoteCard({ quote }) {
   )
 }
 
-function MoodTracker({ week, onLog, onSeeHistory }) {
-  const [pickerOpenFor, setPickerOpenFor] = useState(null)
-
-  return (
-    <section className="mood-tracker">
-      <div className="mood-tracker__head">
-        <h3>Daily Mood Tracker</h3>
-        <button className="link-btn" onClick={onSeeHistory}>See history</button>
-      </div>
-
-      <div className="mood-tracker__row">
-        {week.map((slot) => (
-          <div key={slot.key} className="mood-tracker__col">
-            <motion.button
-              className="mood-tracker__face"
-              disabled={!slot.isToday}
-              style={{
-                background: slot.mood ? MOOD_TINTS[slot.mood] : 'var(--paper)',
-                borderStyle: slot.mood ? 'solid' : 'dashed',
-                opacity: !slot.isToday && !slot.mood ? 0.4 : 1,
-                outline: slot.isToday ? '2px solid var(--sage-500)' : 'none',
-                outlineOffset: 2,
-                cursor: slot.isToday ? 'pointer' : 'default',
-              }}
-              whileTap={slot.isToday ? { scale: 0.88 } : {}}
-              whileHover={slot.isToday ? { scale: 1.06 } : {}}
-              onClick={() => slot.isToday && setPickerOpenFor(pickerOpenFor === slot.key ? null : slot.key)}
-              aria-label={slot.isToday ? `Log mood for ${slot.day}` : `${slot.day} — not editable`}
-            >
-              {slot.mood ? (
-                <MoodFace mood={slot.mood} size={22} />
-              ) : slot.isToday ? (
-                <span className="mood-tracker__plus">+</span>
-              ) : null}
-            </motion.button>
-            <span className="mood-tracker__day">{slot.day}</span>
-          </div>
-        ))}
-      </div>
-
-      <AnimatePresence>
-        {pickerOpenFor && (
-          <motion.div
-            className="mood-picker"
-            initial={{ height: 0, opacity: 0 }}
-            animate={{ height: 'auto', opacity: 1 }}
-            exit={{ height: 0, opacity: 0 }}
-            transition={{ duration: 0.25, ease: 'easeOut' }}
-          >
-            <div className="mood-picker__row">
-              {moods.map((m) => (
-                <motion.button
-                  key={m.id}
-                  className="mood-picker__item"
-                  whileTap={{ scale: 0.85 }}
-                  whileHover={{ y: -3 }}
-                  onClick={() => {
-                    onLog(pickerOpenFor, m.id)
-                    setPickerOpenFor(null)
-                  }}
-                >
-                  <span className="mood-picker__face" style={{ background: MOOD_TINTS[m.id] }}>
-                    <MoodFace mood={m.id} size={20} />
-                  </span>
-                  <span className="mood-picker__label">{m.label}</span>
-                </motion.button>
-              ))}
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </section>
-  )
-}
-
 function QuickActions({ onSelect }) {
   const ICONS = { notebook: NotebookPen, flame: Flame, heart: Heart, butterfly: Sparkles }
   return (
@@ -324,7 +249,7 @@ function QuickActions({ onSelect }) {
             onClick={() => onSelect(action)}
           >
             <span className="quick-actions__icon">
-              <Icon size={18} strokeWidth={1.8} color="var(--ink)" />
+              <Icon size={19} strokeWidth={1.8} color="var(--ink)" />
             </span>
             <span className="quick-actions__title">{action.title}</span>
           </motion.button>
@@ -601,25 +526,26 @@ function EntryDetail({ entry, onClose, onDelete }) {
 export default function App() {
   const [profile, setProfile] = useLocalStorage('solace_profile', { name: '', onboarded: false })
   const [entries, setEntries] = useLocalStorage('solace_entries', [])
-  const [moods, setMoods] = useLocalStorage('solace_moods', {})
   const [desires, setDesires] = useLocalStorage('solace_desires', [])
 
   const [tab, setTab] = useState('home')
   const [composerPreset, setComposerPreset] = useState(null)
   const [viewingEntry, setViewingEntry] = useState(null)
   const [settingsOpen, setSettingsOpen] = useState(false)
+  const contentRef = useRef(null)
+
+  // The scroll pane is stable across tab switches (it no longer remounts),
+  // so scroll position has to be reset by hand when the tab changes.
+  useEffect(() => {
+    if (contentRef.current) contentRef.current.scrollTop = 0
+  }, [tab])
 
   if (!profile.onboarded) {
     return <Onboarding onComplete={(name) => setProfile({ name, onboarded: true })} />
   }
 
-  const week = getWeekDates().map((d) => ({ ...d, mood: moods[d.key] || null }))
   const quote = getTodaysQuote()
   const greetingName = profile.name ? profile.name : 'there'
-
-  function handleLogMood(dateKey, moodId) {
-    setMoods((prev) => ({ ...prev, [dateKey]: moodId }))
-  }
 
   function handleSaveEntry({ title, body }) {
     const entry = {
@@ -642,7 +568,6 @@ export default function App() {
 
   function handleResetData() {
     setEntries([])
-    setMoods({})
     setDesires([])
     setSettingsOpen(false)
   }
@@ -673,7 +598,6 @@ export default function App() {
         </div>
 
         <div className="home-body">
-          <MoodTracker week={week} onLog={handleLogMood} onSeeHistory={() => setTab('insights')} />
           <QuickActions onSelect={setComposerPreset} />
           <EntryList
             entries={entries.slice(0, 3)}
@@ -693,24 +617,26 @@ export default function App() {
         onNew={() => setComposerPreset(freeformPreset)}
       />
     ),
-    insights: <Insights entries={entries} moods={moods} />,
+    insights: <Insights entries={entries} />,
     desires: <Desires desires={desires} setDesires={setDesires} />,
   }
 
   return (
     <div className="app-shell">
-      <AnimatePresence mode="wait">
-        <motion.div
-          key={tab}
-          className="app-content"
-          initial={{ opacity: 0, x: 12 }}
-          animate={{ opacity: 1, x: 0 }}
-          exit={{ opacity: 0, x: -12 }}
-          transition={{ duration: 0.22, ease: 'easeOut' }}
-        >
-          {screens[tab]}
-        </motion.div>
-      </AnimatePresence>
+      <div className="app-content" ref={contentRef}>
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={tab}
+            className="tab-panel"
+            initial={{ opacity: 0, x: 12 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: -12 }}
+            transition={{ duration: 0.22, ease: 'easeOut' }}
+          >
+            {screens[tab]}
+          </motion.div>
+        </AnimatePresence>
+      </div>
 
       <NavBar active={tab} onChange={setTab} />
 
