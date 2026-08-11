@@ -1,5 +1,5 @@
 // App-level content. This is copy/config the app ships with — not user data.
-// All actual user data (entries, moods, desires, profile) lives in localStorage
+// All actual user data (entries, desires, profile) lives in localStorage
 // via src/storage.js.
 
 export const quotes = [
@@ -80,25 +80,9 @@ export const freeformPreset = {
   prompt: "Hey, I'm here. Want to share what's been on your mind today?",
 }
 
-export const moods = [
-  { id: "happy", label: "Happy", tint: "coral" },
-  { id: "neutral", label: "Neutral", tint: "lavender" },
-  { id: "sad", label: "Low", tint: "sage" },
-  { id: "calm", label: "Calm", tint: "lavender-light" },
-  { id: "content", label: "Content", tint: "butter" },
-]
-
 export const TINTS = {
   sage: "var(--sage-100)",
   coral: "var(--coral)",
   lavender: "var(--lavender)",
   butter: "var(--butter)",
-}
-
-export const MOOD_TINTS = {
-  happy: "var(--coral)",
-  content: "var(--butter)",
-  neutral: "var(--sage-200)",
-  calm: "var(--lavender)",
-  sad: "var(--sage-300)",
 }
