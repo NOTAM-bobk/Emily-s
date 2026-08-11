@@ -21,8 +21,8 @@ function EmptyState({ icon: Icon, title, subtitle }) {
   )
 }
 
-export default function Insights({ entries, moods }) {
-  const streak = computeStreak(entries, moods)
+export default function Insights({ entries }) {
+  const streak = computeStreak(entries)
   const activity = weeklyActivity(entries)
   const maxCount = Math.max(1, ...activity.map((a) => a.count))
   const tag = topTag(entries)
@@ -53,7 +53,7 @@ export default function Insights({ entries, moods }) {
         <EmptyState
           icon={BarChart3}
           title="Nothing to show yet"
-          subtitle="Once you log a few entries or moods, your patterns will show up here."
+          subtitle="Once you log a few entries, your patterns will show up here."
         />
       ) : (
         <div className="chart-card">
