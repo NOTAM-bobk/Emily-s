@@ -41,8 +41,11 @@ body {
   background: var(--cream);
   color: var(--ink);
   font-family: var(--font-body);
+  line-height: 1.5;
   -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
   overscroll-behavior-y: none;
+  -webkit-tap-highlight-color: transparent;
 }
 
 #root {
@@ -54,10 +57,20 @@ body {
 button {
   font-family: inherit;
   cursor: pointer;
+  touch-action: manipulation;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
 }
 
 input, textarea {
   font-family: inherit;
+}
+
+h1, h2, h3, h4 {
+  font-family: var(--font-display);
+  line-height: 1.2;
+  letter-spacing: -0.006em;
+  margin: 0;
 }
 
 ::-webkit-scrollbar {
@@ -123,7 +136,7 @@ input, textarea {
 
 .home-hero {
   width: 100%;
-  background: var(--sage-700);
+  background: var(--sage-600);
   border-radius: 0 0 28px 28px;
 }
 
@@ -178,7 +191,9 @@ input, textarea {
   margin: 0;
   font-family: var(--font-display);
   font-weight: 500;
-  font-size: 27px;
+  font-size: 28px;
+  line-height: 1.15;
+  letter-spacing: -0.01em;
   color: var(--cream);
 }
 
@@ -196,14 +211,9 @@ input, textarea {
   60% { transform: rotate(0deg); }
 }
 
-.home-header__icons {
-  display: flex;
-  gap: 8px;
-}
-
 .round-btn {
-  width: 36px;
-  height: 36px;
+  width: 40px;
+  height: 40px;
   border-radius: 50%;
   border: none;
   background: var(--paper);
@@ -228,6 +238,9 @@ input, textarea {
   font-family: var(--font-display);
   font-weight: 500;
   font-size: 28px;
+  line-height: 1.15;
+  letter-spacing: -0.01em;
+  color: var(--ink);
 }
 
 .round-btn--accent {
@@ -708,7 +721,7 @@ input, textarea {
   border: none;
   background: none;
   resize: none;
-  font-size: 14.5px;
+  font-size: 16px;
   line-height: 1.6;
   color: var(--ink);
   padding: 2px;
@@ -1142,7 +1155,7 @@ input, textarea {
   background: var(--paper);
   border-radius: 999px;
   padding: 12px 16px;
-  font-size: 13.5px;
+  font-size: 16px;
   color: var(--ink);
 }
 .desire-form__input:focus { outline: none; border-color: var(--sage-500); }
@@ -1225,7 +1238,7 @@ input, textarea {
   background: var(--paper);
   border-radius: var(--radius-sm);
   padding: 12px 14px;
-  font-size: 14.5px;
+  font-size: 16px;
   color: var(--ink);
 }
 .settings__input:focus { outline: none; border-color: var(--sage-500); }
@@ -1349,7 +1362,7 @@ input, textarea {
   background: var(--cream);
   border-radius: 999px;
   padding: 13px 18px;
-  font-size: 14.5px;
+  font-size: 16px;
   text-align: center;
   color: var(--ink);
 }
