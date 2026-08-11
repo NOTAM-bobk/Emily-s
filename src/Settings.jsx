@@ -66,7 +66,7 @@ export default function Settings({ profile, setProfile, onClose, onResetData }) 
           </p>
           {confirmingReset ? (
             <div className="detail__confirm">
-              <span>Erase all entries, moods, and desires?</span>
+              <span>Erase all entries and desires?</span>
               <button
                 className="detail__confirm-yes"
                 onClick={() => {
