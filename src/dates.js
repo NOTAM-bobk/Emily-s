@@ -70,3 +70,62 @@ export function topTag(entries) {
   })
   return Object.entries(counts).sort((a, b) => b[1] - a[1])[0][0]
 }
+
+/** Date + time label for the composer header, always including the time. */
+export function formatComposerDateTime(date) {
+  const d = new Date(date)
+  const today = startOfDay(new Date())
+  const day = startOfDay(d)
+  const diffDays = Math.round((today - day) / 86400000)
+  const time = d.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' })
+
+  if (diffDays === 0) return `Today, ${time}`
+  if (diffDays === 1) return `Yesterday, ${time}`
+  return `${d.toLocaleDateString([], { month: 'short', day: 'numeric' })}, ${time}`
+}
+
+/** Morning/Afternoon/Evening/Night, based on the hour of the given date. */
+export function timeOfDayLabel(date) {
+  const hour = new Date(date).getHours()
+  if (hour < 5) return 'Night'
+  if (hour < 12) return 'Morning'
+  if (hour < 17) return 'Afternoon'
+  if (hour < 21) return 'Evening'
+  return 'Night'
+}
+
+/** "Morning, Today" / "Afternoon, Aug 12" — the smart default entry title. */
+export function defaultEntryTitle(date) {
+  const d = new Date(date)
+  const today = startOfDay(new Date())
+  const day = startOfDay(d)
+  const diffDays = Math.round((today - day) / 86400000)
+  const dateLabel =
+    diffDays === 0
+      ? 'Today'
+      : diffDays === 1
+      ? 'Yesterday'
+      : d.toLocaleDateString([], { month: 'short', day: 'numeric' })
+  return `${timeOfDayLabel(d)}, ${dateLabel}`
+}
+
+/** Date <-> the string format <input type="datetime-local"> needs. */
+export function toDateTimeLocalValue(date) {
+  const d = new Date(date)
+  const pad = (n) => String(n).padStart(2, '0')
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`
+}
+
+export function fromDateTimeLocalValue(value) {
+  const d = new Date(value)
+  return Number.isNaN(d.getTime()) ? new Date() : d
+}
+
+/** Starred entries pinned to top; everything else newest first. */
+export function sortEntriesForDisplay(entries) {
+  return [...entries].sort((a, b) => {
+    const starDiff = (b.starred ? 1 : 0) - (a.starred ? 1 : 0)
+    if (starDiff !== 0) return starDiff
+    return b.createdAt - a.createdAt
+  })
+}
