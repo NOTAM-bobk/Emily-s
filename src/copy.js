@@ -24,6 +24,35 @@ export const guidedPrompts = [
   "What's one thing that felt hard, and what helped even a little?",
   "What are you looking forward to tomorrow?",
   "What's a thought you keep circling back to?",
+  "Who affected your mood today, and how?",
+  "What's something you did today that your future self will thank you for?",
+  "What are you avoiding right now, and what would happen if you faced it?",
+  "What's a small win from today that's easy to overlook?",
+  "If today had a title, what would it be — and why?",
+  "What do you need to let go of before tomorrow?",
+]
+
+export const moods = [
+  { id: "happy", label: "Happy", tint: "coral" },
+  { id: "neutral", label: "Neutral", tint: "lavender" },
+  { id: "sad", label: "Low", tint: "sage" },
+  { id: "calm", label: "Calm", tint: "lavender-light" },
+  { id: "content", label: "Content", tint: "butter" },
+]
+
+export const MOOD_TINTS = {
+  happy: "var(--coral)",
+  content: "var(--butter)",
+  neutral: "var(--sage-200)",
+  calm: "var(--lavender)",
+  sad: "var(--sage-300)",
+}
+
+// Starter tag catalog for the entry composer's tag picker. Any tag the
+// person creates there gets appended to this list in localStorage so it's
+// selectable again next time (see solace_custom_tags in App.jsx).
+export const presetTags = [
+  "Work", "Family", "Health", "Ideas", "Travel", "Goals", "Relationships", "Gratitude",
 ]
 
 export const quickActions = [
