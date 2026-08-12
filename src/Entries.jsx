@@ -1,6 +1,6 @@
 import { motion } from 'framer-motion'
-import { Plus, NotebookPen } from 'lucide-react'
-import { TINTS } from './copy.js'
+import { Plus, NotebookPen, Star, Image as ImageIcon, Mic } from 'lucide-react'
+import { TINTS, MOOD_TINTS } from './copy.js'
 import { formatEntryDate } from './dates.js'
 
 const MOOD_FACE_PATHS = {
@@ -107,16 +107,46 @@ export default function Entries({ entries, onOpen, onNew }) {
                 onClick={() => onOpen(entry)}
               >
                 <div className="entry-card__top">
-                  <span className="entry-card__date">{formatEntryDate(entry.createdAt)}</span>
+                  <span className="entry-card__date">
+                    {entry.starred && <Star size={11} className="entry-card__star" fill="var(--butter-dark)" />}
+                    {formatEntryDate(entry.createdAt)}
+                  </span>
                   <span className="entry-card__tag" style={{ background: TINTS[entry.tint] }}>
                     {entry.tag}
                   </span>
                 </div>
                 <h4 className="entry-card__title">{entry.title}</h4>
                 <p className="entry-card__body">{entry.body}</p>
+
+                {entry.tags?.length > 0 && (
+                  <div className="entry-card__tags">
+                    {entry.tags.slice(0, 3).map((t) => (
+                      <span key={t} className="tag-chip tag-chip--small">{t}</span>
+                    ))}
+                  </div>
+                )}
+
                 {entry.mood && (
-                  <div className="entry-card__mood" style={{ background: TINTS[entry.tint] }}>
+                  <div
+                    className="entry-card__mood"
+                    style={{ background: MOOD_TINTS[entry.mood] || TINTS[entry.tint] }}
+                  >
                     <MoodFace mood={entry.mood} size={16} />
+                  </div>
+                )}
+
+                {(entry.attachments?.length > 0 || entry.voiceNote) && (
+                  <div className="entry-card__meta">
+                    {entry.attachments?.length > 0 && (
+                      <span className="entry-card__meta-item">
+                        <ImageIcon size={11} /> {entry.attachments.length}
+                      </span>
+                    )}
+                    {entry.voiceNote && (
+                      <span className="entry-card__meta-item">
+                        <Mic size={11} />
+                      </span>
+                    )}
                   </div>
                 )}
               </motion.button>
