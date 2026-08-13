@@ -1498,3 +1498,207 @@ h1, h2, h3, h4 {
 .onboarding__skip {
   margin-top: 2px;
 }
+
+/* ---------- Entries: new-entry button ---------- */
+/* Distinct from .round-btn--accent: a squircle with a soft gradient and a
+   lifted shadow instead of a flat circle, so it reads as the primary
+   action on the Entries screen. */
+
+.entries-new-btn {
+  width: 42px;
+  height: 42px;
+  flex-shrink: 0;
+  border: none;
+  border-radius: var(--radius-sm);
+  background: linear-gradient(155deg, var(--sage-300), var(--sage-600));
+  color: var(--cream);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 8px 18px rgba(86, 115, 64, 0.32);
+}
+
+/* ---------- Entries: search + filters ---------- */
+
+.entry-search {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.search-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--paper);
+  border-radius: 999px;
+  padding: 11px 14px;
+  box-shadow: var(--shadow-soft);
+}
+
+.search-bar__icon {
+  color: var(--ink-faint);
+  flex-shrink: 0;
+}
+
+.search-bar__input {
+  flex: 1;
+  min-width: 0;
+  border: none;
+  background: none;
+  font-size: 13.5px;
+  color: var(--ink);
+}
+.search-bar__input:focus { outline: none; }
+.search-bar__input::placeholder { color: var(--ink-faint); }
+
+.search-bar__clear {
+  flex-shrink: 0;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  border: none;
+  background: var(--sage-50);
+  color: var(--ink-soft);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.search-bar__divider {
+  width: 1px;
+  height: 20px;
+  background: var(--line);
+  flex-shrink: 0;
+}
+
+.search-bar__filter-btn {
+  position: relative;
+  flex-shrink: 0;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  border: none;
+  background: none;
+  color: var(--ink-soft);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s, color 0.15s;
+}
+
+.search-bar__filter-btn.is-open,
+.search-bar__filter-btn.is-active {
+  background: var(--sage-100);
+  color: var(--sage-700);
+}
+
+.search-bar__filter-count {
+  position: absolute;
+  top: -2px;
+  right: -2px;
+  min-width: 15px;
+  height: 15px;
+  padding: 0 3px;
+  border-radius: 999px;
+  background: var(--sage-500);
+  color: var(--cream);
+  font-size: 9px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+}
+
+.filter-panel {
+  overflow: hidden;
+  background: var(--paper);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-soft);
+}
+
+.filter-panel__inner {
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.filter-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.filter-group__label {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+}
+
+.filter-chip-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+}
+
+.filter-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--ink-soft);
+  background: var(--sage-50);
+  border: 1.5px solid transparent;
+  padding: 6px 12px;
+  border-radius: 999px;
+  text-transform: capitalize;
+}
+
+.filter-chip.is-selected {
+  color: var(--ink);
+  border-color: var(--sage-300);
+}
+
+.filter-chip--mood {
+  text-transform: capitalize;
+}
+
+.filter-date-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.filter-date-input {
+  flex: 1;
+  min-width: 0;
+  border: 1.5px solid var(--line);
+  border-radius: var(--radius-sm);
+  padding: 8px 10px;
+  font-size: 12.5px;
+  color: var(--ink);
+  background: var(--cream);
+}
+.filter-date-input:focus { outline: none; border-color: var(--sage-500); }
+
+.filter-date-sep {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--ink-faint);
+  flex-shrink: 0;
+}
+
+.filter-panel__clear {
+  align-self: flex-start;
+  border: none;
+  background: none;
+  color: var(--sage-600);
+  font-size: 12px;
+  font-weight: 700;
+  padding: 2px 0 0;
+}
