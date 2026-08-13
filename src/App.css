@@ -1793,15 +1793,20 @@ h1, h2, h3, h4 {
 }
 
 /* ---------- Onboarding ---------- */
+/* Mobile-first. Scoped accent (warm gold) so this flow reads distinctly
+   from the sage-accented app behind it, without touching global tokens. */
 
 .onboarding {
+  --onboarding-accent: var(--butter-dark);
+  --onboarding-accent-soft: var(--butter);
   width: 100%;
   min-height: 100vh;
   min-height: 100dvh;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 24px;
+  padding: 20px 16px;
+  padding-bottom: max(20px, env(safe-area-inset-bottom));
   background:
     radial-gradient(circle at 20% 10%, #E9EFDD 0%, transparent 50%),
     radial-gradient(circle at 80% 90%, #F1EBDA 0%, transparent 50%),
@@ -1814,7 +1819,7 @@ h1, h2, h3, h4 {
   background: var(--paper);
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-lift);
-  padding: 40px 30px;
+  padding: 24px 22px 26px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -1822,40 +1827,132 @@ h1, h2, h3, h4 {
   gap: 6px;
 }
 
+/* ---- Header: back nav, progress, skip ---- */
+
+.onboarding__header {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 22px;
+}
+
+.onboarding__nav-btn {
+  flex-shrink: 0;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  border: none;
+  background: var(--stone-100);
+  color: var(--ink-soft);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+.onboarding__nav-btn:hover { background: var(--line); color: var(--ink); }
+
+.onboarding__nav-spacer {
+  width: 30px;
+  height: 30px;
+  flex-shrink: 0;
+}
+
+.onboarding__progress-track {
+  flex: 1;
+  height: 3px;
+  border-radius: 999px;
+  background: var(--line);
+  overflow: hidden;
+}
+
+.onboarding__progress-fill {
+  height: 100%;
+  border-radius: 999px;
+  background: var(--onboarding-accent);
+}
+
+/* ---- Step content ---- */
+
+.onboarding__step {
+  width: 100%;
+}
+
+.onboarding__panel {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 4px;
+}
+
 .onboarding__mascot {
-  width: 76px;
-  height: 76px;
+  width: 72px;
+  height: 72px;
   border-radius: 50%;
   background: var(--sage-100);
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-bottom: 12px;
+  margin-bottom: 14px;
 }
 
 .onboarding__card h1 {
   margin: 0;
   font-family: var(--font-display);
-  font-size: 30px;
+  font-size: 28px;
   font-weight: 500;
   color: var(--ink);
 }
 
 .onboarding__tagline {
-  margin: 6px 0 26px;
+  margin: 6px 0 8px;
   font-size: 14px;
   line-height: 1.6;
   color: var(--ink-soft);
-  max-width: 30ch;
+  max-width: 28ch;
 }
 
-.onboarding__form {
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
+.onboarding__icon {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  display: inline-flex;
   align-items: center;
+  justify-content: center;
+  margin-bottom: 10px;
 }
+.onboarding__icon--sage { background: var(--sage-100); }
+.onboarding__icon--coral { background: rgba(241, 170, 157, 0.28); }
+.onboarding__icon--lavender { background: var(--lavender); }
+
+.onboarding__eyebrow {
+  font-size: 0.72rem;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--onboarding-accent);
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+
+.onboarding__headline {
+  font-family: var(--font-display);
+  font-size: 1.3rem;
+  font-weight: 500;
+  line-height: 1.32;
+  margin: 0 0 8px;
+  color: var(--ink);
+}
+
+.onboarding__body {
+  font-size: 0.92rem;
+  line-height: 1.55;
+  color: var(--ink-soft);
+  max-width: 32ch;
+  margin: 0 0 4px;
+}
+
+/* ---- Name step ---- */
 
 .onboarding__input {
   width: 100%;
@@ -1866,16 +1963,149 @@ h1, h2, h3, h4 {
   font-size: 16px;
   text-align: center;
   color: var(--ink);
+  margin-top: 14px;
 }
-.onboarding__input:focus { outline: none; border-color: var(--sage-500); }
+.onboarding__input:focus { outline: none; border-color: var(--onboarding-accent); }
 .onboarding__input::placeholder { color: var(--ink-faint); }
+
+/* ---- Prompt chips ---- */
+
+.onboarding__chips {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 14px;
+}
+
+.onboarding__chip {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  width: 100%;
+  padding: 12px 14px;
+  border-radius: 14px;
+  border: 1.5px solid var(--line);
+  background: var(--cream);
+  text-align: left;
+  cursor: pointer;
+  transition: border-color 0.15s ease, background 0.15s ease, transform 0.1s ease;
+}
+.onboarding__chip:hover { border-color: var(--onboarding-accent-soft); }
+
+.onboarding__chip-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.onboarding__chip-label {
+  font-size: 0.94rem;
+  font-weight: 700;
+  color: var(--ink);
+}
+
+.onboarding__chip-desc {
+  font-size: 0.78rem;
+  color: var(--ink-faint);
+}
+
+.onboarding__chip-check {
+  flex-shrink: 0;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  border: 1.5px solid var(--line);
+  background: var(--paper);
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+
+.onboarding__chip--selected {
+  border-color: var(--onboarding-accent);
+  background: rgba(231, 184, 90, 0.12);
+}
+.onboarding__chip--selected .onboarding__chip-check {
+  background: var(--onboarding-accent);
+  border-color: var(--onboarding-accent);
+}
+.onboarding__chip--selected .onboarding__chip-check::after {
+  content: '';
+  display: block;
+  width: 5px;
+  height: 9px;
+  margin: 3px auto 0;
+  border-right: 1.6px solid var(--ink);
+  border-bottom: 1.6px solid var(--ink);
+  transform: rotate(45deg);
+}
+
+/* ---- Footer / CTA ---- */
+
+.onboarding__form {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  margin-top: 22px;
+}
 
 .onboarding__cta {
   width: 100%;
   padding: 13px 0;
   font-size: 14px;
+  background: var(--onboarding-accent);
+  color: var(--ink);
+}
+.onboarding__cta:disabled { opacity: 0.85; }
+
+.onboarding__fab {
+  align-self: flex-end;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  border: none;
+  background: var(--onboarding-accent);
+  color: var(--ink);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: var(--shadow-soft);
 }
 
 .onboarding__skip {
-  margin-top: 2px;
+  margin-top: 0;
+}
+
+/* ---- Responsive: tablet and up ---- */
+
+@media (min-width: 640px) {
+  .onboarding__card {
+    max-width: 420px;
+    padding: 36px 38px 34px;
+    border-radius: 32px;
+  }
+
+  .onboarding__card h1 { font-size: 32px; }
+  .onboarding__headline { font-size: 1.5rem; }
+  .onboarding__body { font-size: 0.98rem; }
+  .onboarding__mascot { width: 80px; height: 80px; }
+  .onboarding__icon { width: 72px; height: 72px; }
+
+  .onboarding__chip { padding: 14px 16px; }
+}
+
+/* ---- Responsive: desktop ---- */
+
+@media (min-width: 1024px) {
+  .onboarding__card { max-width: 460px; padding: 44px 46px 40px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .onboarding__dot,
+  .onboarding__chip,
+  .onboarding__progress-fill {
+    transition: none;
+  }
 }
