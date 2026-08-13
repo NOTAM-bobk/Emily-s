@@ -1,5 +1,16 @@
-import { motion } from 'framer-motion'
-import { Plus, NotebookPen, Star, Image as ImageIcon, Mic } from 'lucide-react'
+import { useMemo, useState } from 'react'
+import { motion, AnimatePresence } from 'framer-motion'
+import {
+  Plus,
+  NotebookPen,
+  Star,
+  Image as ImageIcon,
+  Mic,
+  Search,
+  SlidersHorizontal,
+  X,
+  SearchX,
+} from 'lucide-react'
 import { TINTS, MOOD_TINTS } from './copy.js'
 import { formatEntryDate } from './dates.js'
 
@@ -70,18 +81,268 @@ function EmptyState({ icon: Icon, title, subtitle }) {
   )
 }
 
+function toggleInList(list, value) {
+  return list.includes(value) ? list.filter((v) => v !== value) : [...list, value]
+}
+
+/** Search + filter bar, plus the collapsible filter panel underneath it. */
+function EntrySearchBar({
+  searchQuery,
+  onSearchChange,
+  filtersOpen,
+  onToggleFilters,
+  activeFilterCount,
+  moodOptions,
+  typeOptions,
+  tagOptions,
+  selectedMoods,
+  selectedTypes,
+  selectedTags,
+  onToggleMood,
+  onToggleType,
+  onToggleTag,
+  dateFrom,
+  dateTo,
+  onDateFromChange,
+  onDateToChange,
+  onClearFilters,
+}) {
+  return (
+    <div className="entry-search">
+      <div className="search-bar">
+        <Search size={16} className="search-bar__icon" />
+        <input
+          type="text"
+          className="search-bar__input"
+          placeholder="Search entries..."
+          value={searchQuery}
+          onChange={(e) => onSearchChange(e.target.value)}
+        />
+        {searchQuery && (
+          <button
+            className="search-bar__clear"
+            onClick={() => onSearchChange('')}
+            aria-label="Clear search"
+          >
+            <X size={13} />
+          </button>
+        )}
+        <span className="search-bar__divider" />
+        <button
+          className={`search-bar__filter-btn ${filtersOpen ? 'is-open' : ''} ${activeFilterCount > 0 ? 'is-active' : ''}`}
+          onClick={onToggleFilters}
+          aria-label="Filters"
+          aria-expanded={filtersOpen}
+        >
+          <SlidersHorizontal size={15} />
+          {activeFilterCount > 0 && <span className="search-bar__filter-count">{activeFilterCount}</span>}
+        </button>
+      </div>
+
+      <AnimatePresence initial={false}>
+        {filtersOpen && (
+          <motion.div
+            className="filter-panel"
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: 'auto', opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.22, ease: 'easeOut' }}
+          >
+            <div className="filter-panel__inner">
+              {moodOptions.length > 0 && (
+                <div className="filter-group">
+                  <span className="filter-group__label">Mood</span>
+                  <div className="filter-chip-row">
+                    {moodOptions.map((mood) => {
+                      const isSelected = selectedMoods.includes(mood)
+                      return (
+                        <button
+                          key={mood}
+                          className={`filter-chip filter-chip--mood ${isSelected ? 'is-selected' : ''}`}
+                          style={isSelected ? { background: MOOD_TINTS[mood], borderColor: 'transparent' } : undefined}
+                          onClick={() => onToggleMood(mood)}
+                        >
+                          <MoodFace mood={mood} size={14} />
+                          <span>{mood}</span>
+                        </button>
+                      )
+                    })}
+                  </div>
+                </div>
+              )}
+
+              {typeOptions.length > 0 && (
+                <div className="filter-group">
+                  <span className="filter-group__label">Type</span>
+                  <div className="filter-chip-row">
+                    {typeOptions.map(({ tag, tint }) => {
+                      const isSelected = selectedTypes.includes(tag)
+                      return (
+                        <button
+                          key={tag}
+                          className={`filter-chip ${isSelected ? 'is-selected' : ''}`}
+                          style={isSelected ? { background: TINTS[tint], borderColor: 'transparent' } : undefined}
+                          onClick={() => onToggleType(tag)}
+                        >
+                          {tag}
+                        </button>
+                      )
+                    })}
+                  </div>
+                </div>
+              )}
+
+              {tagOptions.length > 0 && (
+                <div className="filter-group">
+                  <span className="filter-group__label">Tags</span>
+                  <div className="filter-chip-row">
+                    {tagOptions.map((t) => (
+                      <button
+                        key={t}
+                        className={`filter-chip ${selectedTags.includes(t) ? 'is-selected' : ''}`}
+                        onClick={() => onToggleTag(t)}
+                      >
+                        #{t}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              <div className="filter-group">
+                <span className="filter-group__label">Date range</span>
+                <div className="filter-date-row">
+                  <input
+                    type="date"
+                    className="filter-date-input"
+                    value={dateFrom}
+                    max={dateTo || undefined}
+                    onChange={(e) => onDateFromChange(e.target.value)}
+                  />
+                  <span className="filter-date-sep">to</span>
+                  <input
+                    type="date"
+                    className="filter-date-input"
+                    value={dateTo}
+                    min={dateFrom || undefined}
+                    onChange={(e) => onDateToChange(e.target.value)}
+                  />
+                </div>
+              </div>
+
+              {activeFilterCount > 0 && (
+                <button className="filter-panel__clear" onClick={onClearFilters}>
+                  Clear all filters
+                </button>
+              )}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  )
+}
+
 export default function Entries({ entries, onOpen, onNew }) {
+  const [searchQuery, setSearchQuery] = useState('')
+  const [filtersOpen, setFiltersOpen] = useState(false)
+  const [selectedMoods, setSelectedMoods] = useState([])
+  const [selectedTypes, setSelectedTypes] = useState([])
+  const [selectedTags, setSelectedTags] = useState([])
+  const [dateFrom, setDateFrom] = useState('')
+  const [dateTo, setDateTo] = useState('')
+
+  const moodOptions = useMemo(() => {
+    const set = new Set()
+    entries.forEach((e) => e.mood && set.add(e.mood))
+    return Array.from(set)
+  }, [entries])
+
+  const typeOptions = useMemo(() => {
+    const map = new Map()
+    entries.forEach((e) => {
+      if (e.tag && !map.has(e.tag)) map.set(e.tag, e.tint)
+    })
+    return Array.from(map.entries()).map(([tag, tint]) => ({ tag, tint }))
+  }, [entries])
+
+  const tagOptions = useMemo(() => {
+    const set = new Set()
+    entries.forEach((e) => e.tags?.forEach((t) => set.add(t)))
+    return Array.from(set)
+  }, [entries])
+
+  const activeFilterCount =
+    selectedMoods.length + selectedTypes.length + selectedTags.length + (dateFrom ? 1 : 0) + (dateTo ? 1 : 0)
+
+  const filteredEntries = useMemo(() => {
+    const q = searchQuery.trim().toLowerCase()
+    const from = dateFrom ? new Date(`${dateFrom}T00:00:00`) : null
+    const to = dateTo ? new Date(`${dateTo}T23:59:59`) : null
+
+    return entries.filter((entry) => {
+      if (q) {
+        const haystack = `${entry.title || ''} ${entry.body || ''}`.toLowerCase()
+        if (!haystack.includes(q)) return false
+      }
+      if (selectedMoods.length > 0 && !selectedMoods.includes(entry.mood)) return false
+      if (selectedTypes.length > 0 && !selectedTypes.includes(entry.tag)) return false
+      if (selectedTags.length > 0 && !selectedTags.some((t) => entry.tags?.includes(t))) return false
+      if (from && entry.createdAt < from.getTime()) return false
+      if (to && entry.createdAt > to.getTime()) return false
+      return true
+    })
+  }, [entries, searchQuery, selectedMoods, selectedTypes, selectedTags, dateFrom, dateTo])
+
+  function clearFilters() {
+    setSelectedMoods([])
+    setSelectedTypes([])
+    setSelectedTags([])
+    setDateFrom('')
+    setDateTo('')
+  }
+
+  const isFiltering = searchQuery.trim() !== '' || activeFilterCount > 0
+
   return (
     <div className="screen">
       <header className="section-header">
-        <div>
-          <p className="home-header__eyebrow">Your journal</p>
-          <h1>All Entries</h1>
-        </div>
-        <button className="round-btn round-btn--accent" onClick={onNew} aria-label="New entry">
-          <Plus size={17} />
-        </button>
+        <h1>All Entries</h1>
+        <motion.button
+          className="entries-new-btn"
+          onClick={onNew}
+          aria-label="New entry"
+          whileHover={{ scale: 1.06, y: -1 }}
+          whileTap={{ scale: 0.92 }}
+          transition={{ type: 'spring', stiffness: 500, damping: 22 }}
+        >
+          <Plus size={19} strokeWidth={2.3} />
+        </motion.button>
       </header>
+
+      {entries.length > 0 && (
+        <EntrySearchBar
+          searchQuery={searchQuery}
+          onSearchChange={setSearchQuery}
+          filtersOpen={filtersOpen}
+          onToggleFilters={() => setFiltersOpen((o) => !o)}
+          activeFilterCount={activeFilterCount}
+          moodOptions={moodOptions}
+          typeOptions={typeOptions}
+          tagOptions={tagOptions}
+          selectedMoods={selectedMoods}
+          selectedTypes={selectedTypes}
+          selectedTags={selectedTags}
+          onToggleMood={(m) => setSelectedMoods((prev) => toggleInList(prev, m))}
+          onToggleType={(t) => setSelectedTypes((prev) => toggleInList(prev, t))}
+          onToggleTag={(t) => setSelectedTags((prev) => toggleInList(prev, t))}
+          dateFrom={dateFrom}
+          dateTo={dateTo}
+          onDateFromChange={setDateFrom}
+          onDateToChange={setDateTo}
+          onClearFilters={clearFilters}
+        />
+      )}
 
       {entries.length === 0 ? (
         <EmptyState
@@ -89,13 +350,23 @@ export default function Entries({ entries, onOpen, onNew }) {
           title="No entries yet"
           subtitle="Tap the + above to write your first one."
         />
+      ) : filteredEntries.length === 0 ? (
+        <EmptyState
+          icon={SearchX}
+          title="No matching entries"
+          subtitle="Try a different search or clear your filters."
+        />
       ) : (
         <section className="recent">
           <div className="recent__head">
-            <h3>{entries.length} {entries.length === 1 ? 'entry' : 'entries'}</h3>
+            <h3>
+              {isFiltering
+                ? `${filteredEntries.length} of ${entries.length} ${entries.length === 1 ? 'entry' : 'entries'}`
+                : `${entries.length} ${entries.length === 1 ? 'entry' : 'entries'}`}
+            </h3>
           </div>
           <div className="recent__list">
-            {entries.map((entry, i) => (
+            {filteredEntries.map((entry, i) => (
               <motion.button
                 key={entry.id}
                 className="entry-card"
