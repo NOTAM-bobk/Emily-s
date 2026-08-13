@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion'
+import { ArrowRight, ChevronLeft, X } from 'lucide-react'
 
 function CatMascot({ size = 32 }) {
   return (
@@ -53,18 +54,21 @@ function CompassIcon({ size = 40 }) {
 const FEATURES = [
   {
     icon: WriteIcon,
+    tint: 'sage',
     eyebrow: 'Write',
     headline: 'A private place for whatever\u2019s on your mind',
     body: 'No one reads this but you. Write a full page or a single line \u2014 however the day comes out.',
   },
   {
     icon: PulseIcon,
+    tint: 'coral',
     eyebrow: 'Reflect',
     headline: 'Watch your patterns take shape',
     body: 'A quick check-in each day builds a picture you can\u2019t see day to day \u2014 what lifts you, what wears you down.',
   },
   {
     icon: CompassIcon,
+    tint: 'lavender',
     eyebrow: 'Notice',
     headline: 'Get a little closer to what you want',
     body: 'Putting a feeling into words is often how you find out you had one. Come back in a month and see how far you\u2019ve moved.',
@@ -85,9 +89,9 @@ const PROMPTS_STEP = NAME_STEP + 1
 const TOTAL_STEPS = PROMPTS_STEP + 1
 
 const slideVariants = {
-  enter: (direction) => ({ opacity: 0, x: direction > 0 ? 24 : -24 }),
+  enter: (direction) => ({ opacity: 0, x: direction > 0 ? 28 : -28 }),
   center: { opacity: 1, x: 0 },
-  exit: (direction) => ({ opacity: 0, x: direction > 0 ? -24 : 24 }),
+  exit: (direction) => ({ opacity: 0, x: direction > 0 ? -28 : 28 }),
 }
 
 export default function Onboarding({ onComplete }) {
@@ -129,6 +133,10 @@ export default function Onboarding({ onComplete }) {
   const feature = isFeatureStep ? FEATURES[step - 1] : null
   const isNameStep = step === NAME_STEP
   const isPromptsStep = step === PROMPTS_STEP
+  const isLastStep = step === TOTAL_STEPS - 1
+  const showHeader = step > 0
+  const useCircularCta = isFeatureStep
+  const progressPct = TOTAL_STEPS > 1 ? (step / (TOTAL_STEPS - 1)) * 100 : 0
 
   const ctaLabel = isPromptsStep ? 'Start journaling' : isNameStep ? 'Continue' : step === 0 ? 'Get started' : 'Next'
 
@@ -140,16 +148,39 @@ export default function Onboarding({ onComplete }) {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5, ease: 'easeOut' }}
       >
-        <div className="onboarding__progress" aria-hidden="true">
-          {Array.from({ length: TOTAL_STEPS }).map((_, i) => (
-            <span
-              key={i}
-              className={
-                'onboarding__dot' + (i === step ? ' onboarding__dot--active' : i < step ? ' onboarding__dot--done' : '')
-              }
-            />
-          ))}
-        </div>
+        {showHeader && (
+          <div className="onboarding__header">
+            <button
+              type="button"
+              className="onboarding__nav-btn"
+              onClick={handleBack}
+              aria-label="Back"
+            >
+              <ChevronLeft size={18} />
+            </button>
+
+            <div className="onboarding__progress-track" aria-hidden="true">
+              <motion.div
+                className="onboarding__progress-fill"
+                animate={{ width: `${progressPct}%` }}
+                transition={{ duration: shouldReduceMotion ? 0 : 0.35, ease: 'easeOut' }}
+              />
+            </div>
+
+            {!isLastStep ? (
+              <button
+                type="button"
+                className="onboarding__nav-btn"
+                onClick={handleSkip}
+                aria-label="Skip onboarding"
+              >
+                <X size={18} />
+              </button>
+            ) : (
+              <span className="onboarding__nav-spacer" aria-hidden="true" />
+            )}
+          </div>
+        )}
 
         <AnimatePresence mode="wait" custom={direction} initial={false}>
           <motion.div
@@ -167,8 +198,20 @@ export default function Onboarding({ onComplete }) {
                 <motion.span
                   className="onboarding__mascot"
                   initial={{ scale: 0.8, opacity: 0 }}
-                  animate={{ scale: 1, opacity: 1 }}
-                  transition={{ delay: 0.1, duration: 0.4 }}
+                  animate={
+                    shouldReduceMotion
+                      ? { scale: 1, opacity: 1 }
+                      : { scale: 1, opacity: 1, y: [0, -5, 0] }
+                  }
+                  transition={
+                    shouldReduceMotion
+                      ? { delay: 0.1, duration: 0.4 }
+                      : {
+                          scale: { delay: 0.1, duration: 0.4 },
+                          opacity: { delay: 0.1, duration: 0.4 },
+                          y: { delay: 0.5, duration: 3, repeat: Infinity, ease: 'easeInOut' },
+                        }
+                  }
                 >
                   <CatMascot size={48} />
                 </motion.span>
@@ -182,12 +225,12 @@ export default function Onboarding({ onComplete }) {
             {isFeatureStep && (
               <div className="onboarding__panel">
                 <motion.span
-                  className="onboarding__icon"
-                  initial={{ scale: 0.85, opacity: 0 }}
+                  className={'onboarding__icon onboarding__icon--' + feature.tint}
+                  initial={{ scale: 0.8, opacity: 0 }}
                   animate={{ scale: 1, opacity: 1 }}
                   transition={{ delay: 0.05, duration: 0.35 }}
                 >
-                  <feature.icon size={40} />
+                  <feature.icon size={36} />
                 </motion.span>
                 <span className="onboarding__eyebrow">{feature.eyebrow}</span>
                 <h2 className="onboarding__headline">{feature.headline}</h2>
@@ -215,21 +258,28 @@ export default function Onboarding({ onComplete }) {
                 <h2 className="onboarding__headline">Where do you want to start?</h2>
                 <p className="onboarding__body">Pick a few \u2014 you can change this anytime.</p>
                 <div className="onboarding__chips">
-                  {STARTERS.map((s, i) => (
-                    <motion.button
-                      key={s.id}
-                      type="button"
-                      className={'onboarding__chip' + (selected.includes(s.id) ? ' onboarding__chip--selected' : '')}
-                      onClick={() => toggleStarter(s.id)}
-                      initial={{ opacity: 0, y: 8 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: shouldReduceMotion ? 0 : 0.04 * i, duration: 0.25 }}
-                      whileTap={{ scale: 0.97 }}
-                    >
-                      <span className="onboarding__chip-label">{s.label}</span>
-                      <span className="onboarding__chip-desc">{s.desc}</span>
-                    </motion.button>
-                  ))}
+                  {STARTERS.map((s, i) => {
+                    const isSelected = selected.includes(s.id)
+                    return (
+                      <motion.button
+                        key={s.id}
+                        type="button"
+                        className={'onboarding__chip' + (isSelected ? ' onboarding__chip--selected' : '')}
+                        onClick={() => toggleStarter(s.id)}
+                        initial={{ opacity: 0, y: 8 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: shouldReduceMotion ? 0 : 0.04 * i, duration: 0.25 }}
+                        whileTap={{ scale: 0.97 }}
+                        aria-pressed={isSelected}
+                      >
+                        <span className="onboarding__chip-text">
+                          <span className="onboarding__chip-label">{s.label}</span>
+                          <span className="onboarding__chip-desc">{s.desc}</span>
+                        </span>
+                        <span className="onboarding__chip-check" aria-hidden="true" />
+                      </motion.button>
+                    )
+                  })}
                 </div>
               </div>
             )}
@@ -237,22 +287,26 @@ export default function Onboarding({ onComplete }) {
         </AnimatePresence>
 
         <form onSubmit={handleNext} className="onboarding__form">
-          <motion.button type="submit" className="save-btn onboarding__cta" whileTap={{ scale: 0.95 }}>
-            {ctaLabel}
-          </motion.button>
+          {useCircularCta ? (
+            <motion.button
+              type="submit"
+              className="onboarding__fab"
+              whileTap={{ scale: 0.92 }}
+              aria-label={ctaLabel}
+            >
+              <ArrowRight size={20} />
+            </motion.button>
+          ) : (
+            <motion.button type="submit" className="save-btn onboarding__cta" whileTap={{ scale: 0.96 }}>
+              {ctaLabel}
+            </motion.button>
+          )}
 
-          <div className="onboarding__footer-nav">
-            {step > 0 && (
-              <button type="button" className="link-btn onboarding__back" onClick={handleBack}>
-                Back
-              </button>
-            )}
-            {step < TOTAL_STEPS - 1 && (
-              <button type="button" className="link-btn onboarding__skip" onClick={handleSkip}>
-                Skip for now
-              </button>
-            )}
-          </div>
+          {step === 0 && (
+            <button type="button" className="link-btn onboarding__skip" onClick={handleSkip}>
+              Skip for now
+            </button>
+          )}
         </form>
       </motion.div>
     </div>
