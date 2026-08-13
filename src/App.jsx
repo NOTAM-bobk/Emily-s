@@ -1057,6 +1057,12 @@ export default function App() {
             setProfile={setProfile}
             onClose={() => setSettingsOpen(false)}
             onResetData={handleResetData}
+            entries={entries}
+            desires={desires}
+            customTags={customTags}
+            setEntries={setEntries}
+            setDesires={setDesires}
+            setCustomTags={setCustomTags}
           />
         )}
       </AnimatePresence>
