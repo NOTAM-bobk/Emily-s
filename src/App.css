@@ -1127,6 +1127,242 @@ h1, h2, h3, h4 {
   font-weight: 700;
 }
 
+/* ---------- Insights: expanded ---------- */
+
+.stat-card--butter { background: var(--butter); }
+
+.chart-card__hint {
+  margin: 0;
+  font-size: 12.5px;
+  color: var(--ink-faint);
+  line-height: 1.55;
+}
+
+/* Weekly activity — bars are now tappable buttons with a small tooltip */
+.chart__col {
+  background: none;
+  border: none;
+  padding: 0;
+  position: relative;
+}
+.chart__col.is-active .chart__bar {
+  background: linear-gradient(180deg, var(--coral), var(--coral-dark));
+}
+.chart__tooltip {
+  position: absolute;
+  top: -22px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--ink);
+  background: var(--paper);
+  border: 1px solid var(--line);
+  padding: 3px 7px;
+  border-radius: 8px;
+  white-space: nowrap;
+  box-shadow: var(--shadow-soft);
+  z-index: 1;
+}
+
+/* Mood chart */
+.mood-chart__svg {
+  width: 100%;
+  height: auto;
+  display: block;
+  overflow: visible;
+}
+.mood-chart__midline {
+  stroke: var(--line);
+  stroke-width: 1;
+  stroke-dasharray: 3 4;
+}
+.mood-chart__point { cursor: pointer; }
+
+.mood-chart__caption {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid var(--line);
+}
+.mood-chart__caption-face {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.mood-chart__caption-text {
+  font-size: 12.5px;
+  color: var(--ink-soft);
+}
+.mood-chart__caption-text strong {
+  color: var(--ink);
+  font-weight: 700;
+}
+
+.mood-mix {
+  display: flex;
+  gap: 10px;
+  margin-top: 12px;
+}
+.mood-mix__item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+.mood-mix__face {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.mood-mix__count {
+  font-size: 10.5px;
+  font-weight: 700;
+  color: var(--ink-faint);
+}
+
+/* Tag breakdown */
+.tag-breakdown {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.tag-breakdown__head {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 5px;
+}
+.tag-breakdown__name {
+  font-size: 12.5px;
+  font-weight: 700;
+  color: var(--ink);
+}
+.tag-breakdown__pct {
+  font-size: 11.5px;
+  color: var(--ink-faint);
+  font-weight: 600;
+}
+.tag-breakdown__track {
+  height: 7px;
+  border-radius: 6px;
+  background: var(--sage-50);
+  overflow: hidden;
+}
+.tag-breakdown__fill {
+  height: 100%;
+  border-radius: 6px;
+}
+
+/* Time of day */
+.time-of-day {
+  display: flex;
+  flex-direction: column;
+  gap: 13px;
+}
+.time-of-day__row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.time-of-day__icon {
+  color: var(--sage-600);
+  flex-shrink: 0;
+  display: flex;
+}
+.time-of-day__label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--ink-soft);
+  width: 62px;
+  flex-shrink: 0;
+}
+.time-of-day__track {
+  flex: 1;
+  height: 7px;
+  border-radius: 6px;
+  background: var(--sage-50);
+  overflow: hidden;
+}
+.time-of-day__fill {
+  height: 100%;
+  border-radius: 6px;
+  background: linear-gradient(90deg, var(--sage-300), var(--sage-500));
+}
+.time-of-day__count {
+  font-size: 11.5px;
+  font-weight: 700;
+  color: var(--ink-faint);
+  width: 16px;
+  text-align: right;
+  flex-shrink: 0;
+}
+
+/* Side-by-side on wider viewports, stacked on mobile */
+.insights-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+}
+@media (min-width: 560px) {
+  .insights-grid { flex-direction: row; }
+  .insights-grid .chart-card { flex: 1; min-width: 0; }
+}
+
+/* Tips — reuses the hero's solid sage-600 treatment so the screen bookends
+   the way Home does (dark hero up top, dark card at the close). */
+.tips-card {
+  background: var(--sage-600);
+  border-radius: var(--radius-lg);
+  padding: 18px;
+}
+.tips-card h3 {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  margin: 0 0 14px;
+  font-family: var(--font-display);
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--cream);
+}
+.tips-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.tips-list__item {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+.tips-list__icon {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: rgba(251, 248, 241, 0.14);
+  color: var(--butter);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+.tips-list__item p {
+  margin: 0;
+  font-size: 12.5px;
+  line-height: 1.55;
+  color: rgba(251, 248, 241, 0.88);
+}
+
 /* ---------- Desires ---------- */
 
 .desires-list {
